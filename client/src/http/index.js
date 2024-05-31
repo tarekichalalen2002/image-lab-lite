@@ -106,9 +106,34 @@ const getBlackeWhite = async (image, setRequestPending) => {
     }
 }
 
+const getDeletedChannels = async (image, setRequestPending, channelsToDelete) => {
+  setRequestPending(true)
+  const formData = new FormData();
+  formData.append("image", image)
+  formData.append('channels', JSON.stringify(channelsToDelete));
+  try {
+    const response = await fetch('http://127.0.0.1:5000/delete-channels', {
+      method: 'POST',
+      body: formData,
+    });
+    if (response.ok) {
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setRequestPending(false)
+      return url
+    }
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    setRequestPending(false)
+    return null
+  }
+
+}
+
 export {
   getGrayScale,
   getBluredFaces,
   getBGremoved,
-  getBlackeWhite
+  getBlackeWhite,
+  getDeletedChannels
 }
